@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Button } from '../app/components/ui/button'; // Corrected the path for the Button component
+import { Button } from '../app/components/ui/button';
 
 export default function Home() {
   return (
