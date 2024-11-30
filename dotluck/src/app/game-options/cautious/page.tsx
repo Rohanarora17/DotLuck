@@ -8,7 +8,7 @@ export default function CautiousGame() {
         The Cautious Game
       </h1>
       <p className="text-lg mb-8 text-white">
-        Welcome to The Cautious game! Here you can play with lower stakes and more frequent rewards.
+      "Always leave with something, our No-Loss Lottery guarantees you never lose money, with a 100% zero-loss rate every time you play!"
       </p>
       <Button className="text-lg py-2 px-6 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-pink-600 hover:to-purple-500 text-white transition-all duration-300">
         Start Game
