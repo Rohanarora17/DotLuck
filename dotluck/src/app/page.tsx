@@ -11,7 +11,7 @@ export default function Home() {
       <div className="mb-8">
         <Link href="/game-options"> {/* Fixed the href to match your directory */}
           <Button className="text-lg py-2 px-6 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-pink-600 hover:to-purple-500 text-white transition-all duration-300">
-            Test Your Luck
+            Test Your Luck 🍀
           </Button>
         </Link>
       </div>
