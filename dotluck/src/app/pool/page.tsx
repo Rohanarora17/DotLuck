@@ -4,32 +4,108 @@ import { Card, CardContent } from "../components/ui/card"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { useState, useEffect } from "react"
+import { useAccount, useReadContract, useWriteContract } from 'wagmi'
+import { parseUnits, formatUnits, erc20Abi } from 'viem'
+import { NO_LOSS_LOTTERY_ABI } from "@/constants"
+
+// Contract addresses
+const contractAddress = "0xb93545C7c85aa67C8Daf09fFCE41749178213485";
+const xcDotAddress = "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080";
+
+// ABI
+const abi = NO_LOSS_LOTTERY_ABI
 
 export default function PoolPage() {
-  const [stakeAmount, setStakeAmount] = useState('')
-  const vdotToken = { name: "Polkadot (vDOT)", amount: 0.5, inPool: true }
-  const activeLottery = {
-    daysLeft: 3,
-    totalStaked: "1000 vDOT",
-    participants: 50,
-    maxStakeLimit: 100
-  }
+  const { address } = useAccount();
+  const [stakeAmount, setStakeAmount] = useState('');
+  const [vdotToken, setVdotToken] = useState({ name: '', amount: 0, inPool: false });
+  const [activeLottery, setActiveLottery] = useState({
+    daysLeft: 0,
+    totalStaked: '',
+    participants: 0,
+    maxStakeLimit: 0,
+  });
 
-  const [maxStakeAmount, setMaxStakeAmount] = useState(0)
+  // // Read staking info
+  // const stakingInfo = useReadContract({
+  //   abi,
+  //   address: contractAddress,
+  //   functionName: 'getStakingInfo',
+  // });
+  // console.log(stakingInfo)
+
+  const raffleStats = useReadContract({
+    abi,
+    address: contractAddress,
+    functionName: 'getRaffleStats',
+  });
+
+  // Check allowance
+  const {data:allowance} = useReadContract({
+    abi: erc20Abi,
+    address: xcDotAddress,
+    functionName: 'allowance',
+    args: [address ?? `0xjkj`, contractAddress],
+  });
+
+  const { writeContract: approve } = useWriteContract();
+  const { writeContract: buyTicket } = useWriteContract();
 
   useEffect(() => {
-    setMaxStakeAmount(Math.min(vdotToken.amount, activeLottery.maxStakeLimit))
-  }, [vdotToken.amount, activeLottery.maxStakeLimit])
+    if (raffleStats.data) {
+      // const [totalStaked, currentVTokenBalance] = stakingInfo.data;
+      const [totalParticipants,totalDeposits,  timeRemaining] = raffleStats.data;
 
-  const handleStake = () => {
-    // Implement staking logic here
-    console.log('Staking:', stakeAmount)
-  }
+      setVdotToken({
+        name: 'Polkadot (vDOT)',
+        amount: Number(formatUnits(totalDeposits, 10)),
+        inPool: totalDeposits > 0,
+      });
+
+      setActiveLottery({
+        daysLeft: Math.ceil(parseInt((2592000).toString()) / (60 * 60 * 24)),
+        totalStaked: `${formatUnits(totalDeposits, 10)} vDOT`,
+        participants: parseInt(totalParticipants.toString()),
+        maxStakeLimit: 100, // Assuming a fixed max stake limit
+      });
+    }
+  }, [ raffleStats.data]);
+
+  const handleStake = async () => {
+    if (!allowance|| Number(formatUnits(allowance ?? BigInt(0), 10)) < Number(stakeAmount)) {
+      // Approve the contract if the allowance is insufficient
+      approve({
+        abi: [
+          {
+            "constant": false,
+            "inputs": [
+              { "name": "_spender", "type": "address" },
+              { "name": "_value", "type": "uint256" },
+            ],
+            "name": "approve",
+            "outputs": [{ "name": "", "type": "bool" }],
+            "type": "function",
+          },
+        ],
+        address: xcDotAddress,
+        functionName: 'approve',
+        args: [contractAddress, parseUnits(stakeAmount, 10)],
+      });
+    } else {
+      // Stake the tokens
+      buyTicket({
+        abi,
+        address: contractAddress,
+        functionName: 'buyTicket',
+        args: [parseUnits(stakeAmount, 10)],
+      });
+    }
+  };
 
   const handlePercentageClick = (percentage: number) => {
-    const amount = (percentage / 100) * maxStakeAmount
-    setStakeAmount(amount.toFixed(2))
-  }
+    const amount = (percentage / 100) * vdotToken.amount;
+    setStakeAmount(amount.toFixed(2));
+  };
 
   return (
     <div className="min-h-screen bg-[#1a2332] text-white pt-24">
@@ -40,7 +116,7 @@ export default function PoolPage() {
           <CardContent className="flex items-center justify-between p-4">
             <div>
               <h3 className="text-lg font-medium text-white">{vdotToken.name}</h3>
-              <p className="text-sm text-gray-400">Your Balance: {vdotToken.amount} xcDOT</p>
+              <p className="text-sm text-gray-400">Your Balance: {vdotToken.amount} vDOT</p>
             </div>
             {vdotToken.inPool && (
               <span className="px-3 py-1 text-xs font-medium text-[#a855f7] bg-[#a855f7]/10 rounded-full">
@@ -87,7 +163,7 @@ export default function PoolPage() {
                   type="number"
                   value={stakeAmount}
                   onChange={(e) => setStakeAmount(e.target.value)}
-                  max={maxStakeAmount}
+                  max={vdotToken.amount}
                   className="bg-[#1a2332] border-gray-700 text-white"
                 />
               </div>
@@ -113,6 +189,5 @@ export default function PoolPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-
