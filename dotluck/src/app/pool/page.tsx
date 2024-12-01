@@ -54,7 +54,7 @@ export default function PoolPage() {
   useEffect(() => {
     if (raffleStats.data) {
       // const [totalStaked, currentVTokenBalance] = stakingInfo.data;
-      const [totalParticipants,totalDeposits,  timeRemaining] = raffleStats.data;
+      const [totalParticipants,totalDeposits] = raffleStats.data;
 
       setVdotToken({
         name: 'Polkadot (vDOT)',

@@ -1,7 +1,7 @@
 import {
     getDefaultConfig,
   } from '@rainbow-me/rainbowkit';
-import { moonbaseAlpha, moonbeam } from 'wagmi/chains';
+import { moonbeam } from 'wagmi/chains';
   
 export const config = getDefaultConfig({
     appName: 'My RainbowKit App',
