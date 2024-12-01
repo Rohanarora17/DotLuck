@@ -1,12 +1,19 @@
 'use client'
 
-import { useState } from 'react'
-import { Button } from '../components/ui/button'
-import { Input } from '../components/ui/input'
+import { Card, CardContent } from "../components/ui/card"
+import { Button } from "../components/ui/button"
+import { Input } from "../components/ui/input"
+import { useState } from "react"
 
 export default function PoolPage() {
   const [stakeAmount, setStakeAmount] = useState('')
-  const maxStakeLimit = 100 // This should be fetched from your backend or smart contract
+  const vdotToken = { name: "Polkadot (vDOT)", amount: "0.5 vDOT", inPool: true }
+  const activeLottery = {
+    daysLeft: 3,
+    totalStaked: "1000 vDOT",
+    participants: 50,
+    maxStakeLimit: 100
+  }
 
   const handleStake = () => {
     // Implement staking logic here
@@ -14,25 +21,76 @@ export default function PoolPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-16">
-      <h1 className="text-3xl font-bold mb-8 text-center">DOTLUCK Pool</h1>
-      <div className="max-w-md mx-auto bg-gray-800 p-6 rounded-lg shadow-lg">
-        <h2 className="text-xl font-semibold mb-4">Current Pool Information</h2>
-        <p className="mb-2">Maximum Stake Limit: {maxStakeLimit} DOT</p>
-        <p className="mb-4">Total Pool Size: --- DOT</p>
-        <div className="mb-4">
-          <label htmlFor="stakeAmount" className="block mb-2">Stake Amount (DOT)</label>
-          <Input
-            id="stakeAmount"
-            type="number"
-            value={stakeAmount}
-            onChange={(e) => setStakeAmount(e.target.value)}
-            max={maxStakeLimit}
-            className="w-full"
-          />
+    <div className="min-h-screen bg-[#1a2332] text-white pt-24">
+      <div className="px-6">
+        <h1 className="text-3xl font-bold text-white mb-6">DOTLUCK Pool</h1>
+
+        <Card className="w-full bg-[#232d3f] border-0">
+          <CardContent className="flex items-center justify-between p-4">
+            <div>
+              <h3 className="text-lg font-medium text-white">{vdotToken.name}</h3>
+              <p className="text-sm text-gray-400">Your Balance: {vdotToken.amount}</p>
+            </div>
+            {vdotToken.inPool && (
+              <span className="px-3 py-1 text-xs font-medium text-[#a855f7] bg-[#a855f7]/10 rounded-full">
+                In Pool
+              </span>
+            )}
+          </CardContent>
+        </Card>
+
+        <div className="mt-6">
+          <Card className="w-full bg-[#232d3f] border-0">
+            <CardContent className="p-6">
+              <h2 className="text-2xl font-bold text-white mb-6">Current Lottery Pool</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div>
+                  <p className="text-sm text-gray-400">Days Left to Stake</p>
+                  <p className="text-2xl font-bold text-[#00a86b]">{activeLottery.daysLeft} days</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Total vDOT Staked</p>
+                  <p className="text-2xl font-bold text-[#3366cc]">{activeLottery.totalStaked}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Participants</p>
+                  <p className="text-2xl font-bold text-[#a855f7]">{activeLottery.participants}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Max Stake Limit</p>
+                  <p className="text-2xl font-bold text-[#ff6b6b]">{activeLottery.maxStakeLimit} vDOT</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-        <Button onClick={handleStake} className="w-full">Stake DOT</Button>
+
+        <div className="mt-6">
+          <Card className="w-full bg-[#232d3f] border-0">
+            <CardContent className="p-6">
+              <h3 className="text-xl font-bold text-white mb-4">Stake vDOT</h3>
+              <div className="space-y-2">
+                <label htmlFor="stakeAmount" className="text-sm text-gray-400">Amount to Stake (vDOT)</label>
+                <Input
+                  id="stakeAmount"
+                  type="number"
+                  value={stakeAmount}
+                  onChange={(e) => setStakeAmount(e.target.value)}
+                  max={activeLottery.maxStakeLimit}
+                  className="bg-[#1a2332] border-gray-700 text-white"
+                />
+              </div>
+              <Button 
+                onClick={handleStake} 
+                className="w-full bg-[#00a86b] hover:bg-[#00955f] text-white transition-all duration-300 mt-4"
+              >
+                Stake vDOT
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   )
 }
+
