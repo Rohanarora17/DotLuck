@@ -9,7 +9,7 @@ export default function ChampionGame() {
   return (
     <div className="container mx-auto px-0 py-0">
       <div className="bg-gray-800/80 rounded-lg shadow-lg overflow-hidden">
-        <div className="flex flex-col md:flex-row ">
+        <div className="flex flex-col md:flex-row">
           <div className="md:w-1/3 relative h-64 md:h-auto">
             <Image
               src={championImage}
@@ -27,7 +27,7 @@ export default function ChampionGame() {
                 Welcome to The Champion game! Here you can play for high stakes
                 and big rewards. This is your chance to compete with the best
                 and aim for life-changing wins. Are you ready to join the
-                DOTLUCK Pool and prove you're a true champion?
+                DOTLUCK Pool and prove you&apos;re a true champion?
               </p>
               <div className="px-6 pb-6 flex justify-center">
                 <Link href="/pool">
