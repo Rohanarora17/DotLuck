@@ -16,7 +16,7 @@ export function Header() {
               variant="ghost" 
               className="text-white hover:text-purple-400 transition-all duration-300"
             >
-              Winner
+              Past Winners
             </Button>
           </Link>
           <ConnectButton />
