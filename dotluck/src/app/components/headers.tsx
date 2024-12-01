@@ -1,10 +1,9 @@
-import Link from 'next/link'
-import { Button } from "../components/ui/button"
-import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { useAccount } from 'wagmi'
+import Link from 'next/link';
+import { Button } from "../components/ui/button";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export function Header() {
-  const a = useAccount()
+
   return (
     <header className="bg-gradient-to-u from-gray-900 to-black py-6">
       <div className="container mx-auto px-4 flex justify-between items-center">
@@ -20,11 +19,9 @@ export function Header() {
               Winner
             </Button>
           </Link>
-          <ConnectButton/>
-          {/* <ConnectButton /> */}
+          <ConnectButton />
         </div>
       </div>
     </header>
-  )
+  );
 }
-

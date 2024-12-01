@@ -1,6 +1,5 @@
 import {
     getDefaultConfig,
-    RainbowKitProvider,
   } from '@rainbow-me/rainbowkit';
 import { moonbaseAlpha } from 'wagmi/chains';
   
