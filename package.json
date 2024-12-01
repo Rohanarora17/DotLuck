@@ -5,6 +5,7 @@
     "hardhat": "^2.22.16"
   },
   "dependencies": {
+    "@nomicfoundation/hardhat-viem": "^2.0.6",
     "tailwind-merge": "^2.5.5"
   }
 }
