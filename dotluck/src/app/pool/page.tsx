@@ -18,7 +18,7 @@ const abi = NO_LOSS_LOTTERY_ABI
 export default function PoolPage() {
   const { address } = useAccount();
   const [stakeAmount, setStakeAmount] = useState('');
-  const [vdotToken, setVdotToken] = useState({ name: '', amount: 0, inPool: false });
+  const [xcdotToken, setVdotToken] = useState({ name: '', amount: 0, inPool: false });
   const [activeLottery, setActiveLottery] = useState({
     daysLeft: 0,
     totalStaked: '',
@@ -103,7 +103,7 @@ export default function PoolPage() {
   };
 
   const handlePercentageClick = (percentage: number) => {
-    const amount = (percentage / 100) * vdotToken.amount;
+    const amount = (percentage / 100) * xcdotToken.amount;
     setStakeAmount(amount.toFixed(2));
   };
 
@@ -115,10 +115,10 @@ export default function PoolPage() {
         <Card className="w-full bg-[#232d3f] border-0">
           <CardContent className="flex items-center justify-between p-4">
             <div>
-              <h3 className="text-lg font-medium text-white">{vdotToken.name}</h3>
-              <p className="text-sm text-gray-400">Your Balance: {vdotToken.amount} vDOT</p>
+              <h3 className="text-lg font-medium text-white">{xcdotToken.name}</h3>
+              <p className="text-sm text-gray-400">Your Balance: {xcdotToken.amount} xcDOT</p>
             </div>
-            {vdotToken.inPool && (
+            {xcdotToken.inPool && (
               <span className="px-3 py-1 text-xs font-medium text-[#a855f7] bg-[#a855f7]/10 rounded-full">
                 In Pool
               </span>
@@ -136,7 +136,7 @@ export default function PoolPage() {
                   <p className="text-2xl font-bold text-[#00a86b]">{activeLottery.daysLeft} days</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-400">Total vDOT Staked</p>
+                  <p className="text-sm text-gray-400">Total xcDOT Staked</p>
                   <p className="text-2xl font-bold text-[#3366cc]">{activeLottery.totalStaked}</p>
                 </div>
                 <div>
@@ -145,7 +145,7 @@ export default function PoolPage() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-400">Max Stake Limit</p>
-                  <p className="text-2xl font-bold text-[#ff6b6b]">{activeLottery.maxStakeLimit} vDOT</p>
+                  <p className="text-2xl font-bold text-[#ff6b6b]">{activeLottery.maxStakeLimit} xcDOT</p>
                 </div>
               </div>
             </CardContent>
@@ -155,15 +155,15 @@ export default function PoolPage() {
         <div className="mt-6">
           <Card className="w-full bg-[#232d3f] border-0">
             <CardContent className="p-6">
-              <h3 className="text-xl font-bold text-white mb-4">Stake vDOT</h3>
+              <h3 className="text-xl font-bold text-white mb-4">Stake xcDOT</h3>
               <div className="space-y-2">
-                <label htmlFor="stakeAmount" className="text-sm text-gray-400">Amount to Stake (vDOT)</label>
+                <label htmlFor="stakeAmount" className="text-sm text-gray-400">Amount to Stake (xcDOT)</label>
                 <Input
                   id="stakeAmount"
                   type="number"
                   value={stakeAmount}
                   onChange={(e) => setStakeAmount(e.target.value)}
-                  max={vdotToken.amount}
+                  max={xcdotToken.amount}
                   className="bg-[#1a2332] border-gray-700 text-white"
                 />
               </div>
@@ -182,7 +182,7 @@ export default function PoolPage() {
                 onClick={handleStake} 
                 className="w-full bg-[#00a86b] hover:bg-[#00955f] text-white transition-all duration-300 mt-4"
               >
-                Stake vDOT
+                Stake xcDOT
               </Button>
             </CardContent>
           </Card>
