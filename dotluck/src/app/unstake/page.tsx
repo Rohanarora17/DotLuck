@@ -2,13 +2,13 @@
 
 import { useState } from "react"
 import { useAccount, useReadContract, useWriteContract } from 'wagmi'
-import { formatUnits, parseUnits } from 'viem'
+import { formatUnits } from 'viem'
 import { NO_LOSS_LOTTERY_ABI } from "@/constants"
-import { useToast } from "../components/ui/toast"
+import { useToast } from "../../app/components/ui/toast"
 import Link from "next/link"
 import { ArrowLeft } from 'lucide-react'
-import { Card, CardContent } from "../components/ui/card"
-import { Button } from "../components/ui/button"
+import { Card, CardContent } from "../../app/components/ui/card"
+import { Button } from "../../app/components/ui/button"
 
 const contractAddress = "0xb93545C7c85aa67C8Daf09fFCE41749178213485"
 const abi = NO_LOSS_LOTTERY_ABI
@@ -50,6 +50,7 @@ export default function UnstakePage() {
         description: "Your unstake request is being processed",
       })
     } catch (error) {
+      console.error("Unstake error:", error)
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",

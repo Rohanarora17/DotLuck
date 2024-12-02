@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Twitter, DiscIcon , Github } from 'lucide-react'
+import {  Github } from 'lucide-react'
 import im from "../../../public/polkadot-new-dot-logo.png"
 
 export function Footer() {

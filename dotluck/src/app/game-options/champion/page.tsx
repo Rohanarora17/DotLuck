@@ -29,7 +29,7 @@ export default function ChampionGame() {
             The Champion Game
           </h1>
           <p className="text-lg text-gray-300 max-w-2xl mx-auto">
-            Welcome to the Champion Game, where high stakes meet big rewards. This exclusive pool is designed for those who dare to dream big and play bigger. With a fixed maximum stake of $2.00, every player has an equal shot at glory. Are you ready to prove you're a true champion?
+            Welcome to the Champion Game, where high stakes meet big rewards. This exclusive pool is designed for those who dare to dream big and play bigger. With a fixed maximum stake of $2.00, every player has an equal shot at glory. Are you ready to prove you&apos;re a true champion?
           </p>
         </div>
 
