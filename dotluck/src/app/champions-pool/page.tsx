@@ -42,6 +42,16 @@ export default function ChampionsPoolPage() {
     args: [address ?? `0x0`, contractAddress],
   });
 
+
+  // Check balance
+  const {data:balanceOf} = useReadContract({
+    abi: erc20Abi,
+    address: xcDotAddress,
+    functionName: 'balanceOf',
+    args: [address ?? `0x0`],
+  });
+
+
   const { writeContract: approve } = useWriteContract();
   const { writeContract: buyTicket } = useWriteContract();
 
@@ -49,9 +59,11 @@ export default function ChampionsPoolPage() {
     if (raffleStats.data) {
       const [totalParticipants, totalDeposits] = raffleStats.data;
 
+      const user_balance = balanceOf ? balanceOf : 0;
+
       setXcdotToken({
         name: 'Polkadot (xcDOT)',
-        amount: Number(formatUnits(totalDeposits, 10)),
+        amount: Number(formatUnits(BigInt(user_balance), 10)),
         inPool: totalDeposits > 0,
       });
 
@@ -61,7 +73,7 @@ export default function ChampionsPoolPage() {
         participants: parseInt(totalParticipants.toString()),
       });
     }
-  }, [raffleStats.data]);
+  }, [raffleStats.data, balanceOf]);
 
   const handleStake = async () => {
     if (!allowance || Number(formatUnits(allowance ?? BigInt(0), 10)) < FIXED_TICKET_PRICE) {
