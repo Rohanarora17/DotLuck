@@ -17,7 +17,7 @@ const xcDotAddress = "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080";
 // ABI
 const abi = NO_LOSS_LOTTERY_ABI
 
-export default function PoolPage() {
+export default function ChampionsPoolPage() {
   const { address } = useAccount();
   const [stakeAmount, setStakeAmount] = useState('');
   const [xcdotToken, setXcdotToken] = useState({ name: '', amount: 0, inPool: false });
@@ -59,7 +59,7 @@ export default function PoolPage() {
         daysLeft: Math.ceil(parseInt((2592000).toString()) / (60 * 60 * 24)),
         totalStaked: `${formatUnits(totalDeposits, 10)} xcDOT`,
         participants: parseInt(totalParticipants.toString()),
-        maxStakeLimit: 100, // Max stake limit for Cautious pool
+        maxStakeLimit: 1000, // Higher max stake limit for Champions Pool
       });
     }
   }, [raffleStats.data]);
@@ -103,12 +103,12 @@ export default function PoolPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white pt-2 pb-10">
       <div className="px-6 max-w-4xl mx-auto">
-        <Link href="/game" className="inline-flex items-center text-sky-400 hover:text-sky-300 mb-6">
+        <Link href="/game-options/champion" className="inline-flex items-center text-sky-400 hover:text-sky-300 mb-6">
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Game Selection
+          Back to Champion Game
         </Link>
 
-        <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 mb-6">Cautious Pool</h1>
+        <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 mb-6">Champions Pool</h1>
 
         <Card className="w-full bg-[#232d3f] border-0 mb-6">
           <CardContent className="flex items-center justify-between p-4">
@@ -118,7 +118,7 @@ export default function PoolPage() {
             </div>
             {xcdotToken.inPool && (
               <span className="px-3 py-1 text-xs font-medium text-sky-400 bg-sky-400/10 rounded-full">
-                Cautious Pool
+                In Champions Pool
               </span>
             )}
           </CardContent>
@@ -126,7 +126,7 @@ export default function PoolPage() {
 
         <Card className="w-full bg-[#232d3f] border-0 mb-6">
           <CardContent className="p-6">
-            <h2 className="text-2xl font-bold text-white mb-6">Current Cautious Lottery</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">Current Champions Lottery</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div>
                 <p className="text-sm text-gray-400">Days Left to Stake</p>
@@ -150,7 +150,7 @@ export default function PoolPage() {
 
         <Card className="w-full bg-[#232d3f] border-0">
           <CardContent className="p-6">
-            <h3 className="text-xl font-bold text-white mb-4">Stake xcDOT in Cautious Pool</h3>
+            <h3 className="text-xl font-bold text-white mb-4">Stake xcDOT in Champions Pool</h3>
             <div className="space-y-2">
               <label htmlFor="stakeAmount" className="text-sm text-gray-400">Amount to Stake (xcDOT)</label>
               <Input
@@ -177,7 +177,7 @@ export default function PoolPage() {
               onClick={handleStake} 
               className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-blue-600 hover:to-sky-500 text-white transition-all duration-300 mt-4"
             >
-              Stake in Cautious Pool
+              Stake in Champions Pool
             </Button>
           </CardContent>
         </Card>
