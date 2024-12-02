@@ -10,7 +10,7 @@ import { LOTTERY_ABI } from '@/constants'
 const LOTTERY_ADDRESS = '0xc23D6746858a451a592C95e39A87e7Ebc754eF71'
 const xcDotAddress = "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080";
 
-export default function Lottery() {
+export default function Lottery({params}: {params: {id: string}}) {
     const { address, isConnected } = useAccount()
     const [participants, setParticipants] = useState<string[]>([])
     const [jackpot, setJackpot] = useState<bigint>(BigInt(0))
@@ -19,7 +19,7 @@ export default function Lottery() {
     const [approvalHash, setApprovalHash] = useState<`0x${string}` | undefined>()
     const [isApproved, setIsApproved] = useState(false)
   
-    const lotteryId = BigInt(1)
+    const lotteryId = BigInt(params.id)
   
     const { data: participantsData, refetch: refetchParticipants } = useReadContract({
       address: LOTTERY_ADDRESS,
@@ -122,7 +122,7 @@ export default function Lottery() {
     <div className="flex min-h-screen flex-col items-center justify-between p-24">
     <Card className="w-[350px]">
       <CardHeader>
-        <CardTitle>Lottery #1</CardTitle>
+        <CardTitle>Lottery #{params.id}</CardTitle>
         <CardDescription>Participate in the lottery or start it if enough participants have joined.</CardDescription>
       </CardHeader>
       <CardContent>
@@ -133,9 +133,10 @@ export default function Lottery() {
         <Button onClick={handleParticipate} disabled={isParticipating}>
           {isParticipating ? 'Participating...' : 'Participate'}
         </Button>
+        {address?.toLowerCase() === "0x329cB26Ac9320cb571E83F27Db68f71b8c18940C".toLowerCase() ?
         <Button onClick={handleStartLottery} disabled={isStartingLottery}>
-          {isStartingLottery && address?.toLowerCase() === "0x329cB26Ac9320cb571E83F27Db68f71b8c18940C".toLowerCase() ? 'Starting...' : 'End Lottery'}
-        </Button>
+          {isStartingLottery  ? 'Starting...' : 'End Lottery'}
+        </Button> : null}
       </CardFooter>
     </Card>
     </div>

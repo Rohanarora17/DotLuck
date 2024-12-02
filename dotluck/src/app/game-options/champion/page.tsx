@@ -112,7 +112,7 @@ const LotteryList = () => {
                   </p>
                 </div>
                 <Link
-                  href={`/lottery/${lottery.id}`}
+                  href={`champion/${lottery.id}`}
                   className="text-sky-400 hover:text-sky-300 mt-4 inline-block"
                 >
                   View Details
