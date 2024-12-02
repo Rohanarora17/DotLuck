@@ -1,8 +1,10 @@
 "use client";
+
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { Header } from "../app/components/headers";
 import { BackgroundBeamsWithCollision } from "../app/components/ui/background-beams-with-collision";
+import { Footer } from "../app/components/footer";
 import "@rainbow-me/rainbowkit/styles.css";
 import { Providers } from "./providers";
 
@@ -19,16 +21,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} bg-gray-900 text-white`}>
+      <body className={`${inter.className} bg-gray-900 text-white flex flex-col min-h-screen`}>
         <Providers>
           <QueryClientProvider client={queryClient}>
             <Header />
             <BackgroundBeamsWithCollision>
-              <main className="relative z-10">{children}</main>
+              <main className="relative z-10 flex-grow">{children}</main>
             </BackgroundBeamsWithCollision>
+            <Footer />
           </QueryClientProvider>
         </Providers>
       </body>
     </html>
   );
 }
+

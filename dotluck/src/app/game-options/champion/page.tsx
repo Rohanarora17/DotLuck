@@ -30,7 +30,7 @@ export default function ChampionGame() {
                 DOTLUCK Pool and prove you&apos;re a true champion?
               </p>
               <div className="px-6 pb-6 flex justify-center">
-                <Link href="/pool">
+                <Link href="/champions-pool">
                   <Button className="w-full md:w-auto justify-v text-lg py-2 px-6 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-blue-600 hover:to-sky-500 text-white transition-all duration-300">
                     Start Game
                   </Button>
@@ -48,5 +48,4 @@ export default function ChampionGame() {
     </div>
   );
 }
-
 
