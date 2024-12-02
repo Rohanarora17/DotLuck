@@ -54,7 +54,7 @@ export default function CautiousGameInterfaces() {
           </h1>
           <p className="text-lg text-gray-300 max-w-2xl mx-auto">
             There are multiple ways to interact with the Cautious Game pools. Choose the interface that best suits your needs,
-            whether you're looking to stake for the first time or manage your active stakes.
+            whether you&apos;re looking to stake for the first time or manage your active stakes.
           </p>
         </div>
 
@@ -176,7 +176,7 @@ export default function CautiousGameInterfaces() {
             <DialogTitle className="text-xl font-bold text-white">No Active Stake</DialogTitle>
           </DialogHeader>
           <div className="text-white">
-            <p>You haven't staked any amount yet. Please stake some xcDOT to access the Active Pool.</p>
+            <p>You haven&apos;t staked any amount yet. Please stake some xcDOT to access the Active Pool.</p>
           </div>
           <Button onClick={() => setShowNoStakeDialog(false)} className="bg-sky-500 hover:bg-sky-600 text-white">
             Close
