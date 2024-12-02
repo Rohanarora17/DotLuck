@@ -1,94 +1,129 @@
 "use client";
 
+import { useReadContract } from "wagmi";
+import {readContract} from "wagmi/actions"
+import { LOTTERY_ABI } from "@/constants";
 import { Card, CardContent } from "../../components/ui/card";
 import Link from "next/link";
-import { ArrowUpRight } from 'lucide-react';
-import { useReadContract } from 'wagmi';
-import { formatUnits } from 'viem';
-import { NO_LOSS_LOTTERY_ABI } from "@/constants";
-import { Progress } from "../../components/ui/progress"
+import { useEffect, useState } from "react";
+import { config } from "@/wagmi";
 
-const contractAddress = "0xb93545C7c85aa67C8Daf09fFCE41749178213485";
-const abi = NO_LOSS_LOTTERY_ABI;
+interface LotteryDetails {
+  id: number;
+  numWinners: number;
+  minParticipants: bigint;
+  maxParticipants: bigint;
+  participationFee: bigint;
+  minFee: bigint;
+  isActive: boolean;
+}
 
-export default function ChampionGame() {
-  const raffleStats = useReadContract({
-    abi,
+const contractAddress = "0xc23D6746858a451a592C95e39A87e7Ebc754eF71"; // Replace with your contract address
+
+const LotteryList = () => {
+  const { data: lotteryIdCounter, isLoading: isLoadingIds } = useReadContract({
+    abi: LOTTERY_ABI,
     address: contractAddress,
-    functionName: 'getRaffleStats',
+    functionName: "lotteryIdCounter",
   });
 
-  // Simulated pool progress (replace with actual data in production)
-  const poolProgress = 65;
+  
+  const [lotteries, setLotteries] = useState<LotteryDetails[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (lotteryIdCounter) {
+      const fetchLotteries = async () => {
+        const fetchedLotteries: LotteryDetails[] = [];
+        for (let i = 1; i < Number(lotteryIdCounter); i++) {
+          const data = await readContract(config,{
+            abi: LOTTERY_ABI,
+            address: contractAddress,
+            functionName: "lotteries",
+            args: [BigInt(i)],
+          });
+
+          if (data) {
+            const [numWinners, minParticipants, maxParticipants, participationFee, minFee, isActive] =
+              data;
+
+            fetchedLotteries.push({
+              id: i,
+              numWinners,
+              minParticipants,
+              maxParticipants,
+              participationFee,
+              minFee,
+              isActive,
+            });
+          }
+        }
+        setLotteries(fetchedLotteries);
+        setIsLoading(false);
+      };
+
+      fetchLotteries();
+    }
+  }, [lotteryIdCounter]);
+
+  const formatBigintToNumber = (value: bigint): string => {
+    return value.toString(); // Adjust formatting for decimals if needed
+  };
+
+  if (isLoadingIds || isLoading) {
+    return <p className="text-gray-400 text-center">Loading lotteries...</p>;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 pt-10">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600">
-            The Champion Game
-          </h1>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
-            Welcome to the Champion Game, where high stakes meet big rewards. This exclusive pool is designed for those who dare to dream big and play bigger. With a fixed maximum stake of $2.00, every player has an equal shot at glory. Are you ready to prove you&apos;re a true champion?
-          </p>
-        </div>
-
+        <h1 className="text-4xl font-bold mb-6 text-white text-center">Available Lotteries</h1>
         <div className="space-y-6">
-          <Link 
-            href="/champions-pool"
-            className="block transition-transform hover:scale-[1.02]"
-          >
-            <Card className="w-full bg-[#232d3f] border-0 hover:bg-[#2a3649]">
+          {lotteries.map((lottery) => (
+            <Card key={lottery.id} className="bg-[#232d3f] border-0 hover:bg-[#2a3649]">
               <CardContent className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-xl font-bold text-white">Champion Pool</h3>
-                      <span className="px-3 py-1 text-xs font-medium text-sky-400 bg-sky-400/10 rounded-full">Active</span>
-                    </div>
-                    <p className="text-sm text-gray-400">High stakes, high rewards</p>
-                  </div>
-                  <ArrowUpRight className="w-5 h-5 text-gray-400" />
+                <div className="flex justify-between items-center">
+                  <h3 className="text-xl font-bold text-white">Lottery #{lottery.id}</h3>
+                  <span
+                    className={`px-3 py-1 text-xs font-medium ${
+                      lottery.isActive
+                        ? "bg-green-500/10 text-green-400"
+                        : "bg-red-500/10 text-red-400"
+                    } rounded-full`}
+                  >
+                    {lottery.isActive ? "Active" : "Inactive"}
+                  </span>
                 </div>
-
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <p className="text-sm text-gray-400">Total Staked</p>
-                    <p className="font-bold text-white">
-                      {raffleStats.data ? formatUnits(raffleStats.data[1], 10) : '0'} $
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Maximum Stake</p>
-                    <p className="font-bold text-white">$2.00</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Minimum Stake</p>
-                    <p className="font-bold text-white">$2.00</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Participants</p>
-                    <p className="font-bold text-white">
-                      {raffleStats.data ? raffleStats.data[0].toString() : '0'}
-                    </p>
-                  </div>
+                <div className="mt-4 text-gray-400 space-y-2">
+                  <p>
+                    <strong>Number of Winners:</strong> {lottery.numWinners}
+                  </p>
+                  <p>
+                    <strong>Min Participants:</strong> {formatBigintToNumber(lottery.minParticipants)}
+                  </p>
+                  <p>
+                    <strong>Max Participants:</strong> {formatBigintToNumber(lottery.maxParticipants)}
+                  </p>
+                  <p>
+                    <strong>Participation Fee:</strong> {formatBigintToNumber(lottery.participationFee)} xcDOT
+                  </p>
+                  <p>
+                    <strong>Minimum Fee:</strong> {formatBigintToNumber(lottery.minFee)} xcDOT
+                  </p>
                 </div>
-                <div className="mt-4">
-                  <p className="text-sm text-gray-400 mb-2">Pool Progress</p>
-                  <Progress value={poolProgress} className="w-full h-2" />
-                </div>
+                <Link
+                  href={`champion/${lottery.id}`}
+                  className="text-sky-400 hover:text-sky-300 mt-4 inline-block"
+                >
+                  View Details
+                </Link>
               </CardContent>
             </Card>
-          </Link>
-        </div>
-
-        <div className="mt-8 text-center">
-          <Link href="/game-options" className="text-sky-400 hover:text-sky-300">
-            Back to Game Selection
-          </Link>
+          ))}
         </div>
       </div>
     </div>
   );
-}
+};
 
+export default LotteryList;
