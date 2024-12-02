@@ -2,7 +2,6 @@
 
 import { Card, CardContent } from "../components/ui/card"
 import { Button } from "../components/ui/button"
-import { Input } from "../components/ui/input"
 import { useState, useEffect } from "react"
 import { useAccount, useReadContract, useWriteContract } from 'wagmi'
 import { parseUnits, formatUnits, erc20Abi } from 'viem'
@@ -17,15 +16,16 @@ const xcDotAddress = "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080";
 // ABI
 const abi = NO_LOSS_LOTTERY_ABI
 
+// Fixed ticket price in xcDOT
+const FIXED_TICKET_PRICE = 2; // 2 xcDOT per ticket
+
 export default function ChampionsPoolPage() {
   const { address } = useAccount();
-  const [stakeAmount, setStakeAmount] = useState('');
   const [xcdotToken, setXcdotToken] = useState({ name: '', amount: 0, inPool: false });
   const [activeLottery, setActiveLottery] = useState({
     daysLeft: 0,
     totalStaked: '',
     participants: 0,
-    maxStakeLimit: 0,
   });
 
   const raffleStats = useReadContract({
@@ -59,13 +59,12 @@ export default function ChampionsPoolPage() {
         daysLeft: Math.ceil(parseInt((2592000).toString()) / (60 * 60 * 24)),
         totalStaked: `${formatUnits(totalDeposits, 10)} xcDOT`,
         participants: parseInt(totalParticipants.toString()),
-        maxStakeLimit: 1000, // Higher max stake limit for Champions Pool
       });
     }
   }, [raffleStats.data]);
 
   const handleStake = async () => {
-    if (!allowance || Number(formatUnits(allowance ?? BigInt(0), 10)) < Number(stakeAmount)) {
+    if (!allowance || Number(formatUnits(allowance ?? BigInt(0), 10)) < FIXED_TICKET_PRICE) {
       // Approve the contract if the allowance is insufficient
       approve({
         abi: [
@@ -82,22 +81,17 @@ export default function ChampionsPoolPage() {
         ],
         address: xcDotAddress,
         functionName: 'approve',
-        args: [contractAddress, parseUnits(stakeAmount, 10)],
+        args: [contractAddress, parseUnits(FIXED_TICKET_PRICE.toString(), 10)],
       });
     } else {
-      // Stake the tokens
+      // Buy a ticket
       buyTicket({
         abi,
         address: contractAddress,
         functionName: 'buyTicket',
-        args: [parseUnits(stakeAmount, 10)],
+        args: [parseUnits(FIXED_TICKET_PRICE.toString(), 10)],
       });
     }
-  };
-
-  const handlePercentageClick = (percentage: number) => {
-    const amount = (percentage / 100) * xcdotToken.amount;
-    setStakeAmount(amount.toFixed(2));
   };
 
   return (
@@ -127,7 +121,7 @@ export default function ChampionsPoolPage() {
         <Card className="w-full bg-[#232d3f] border-0 mb-6">
           <CardContent className="p-6">
             <h2 className="text-2xl font-bold text-white mb-6">Current Champions Lottery</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <p className="text-sm text-gray-400">Days Left to Stake</p>
                 <p className="text-2xl font-bold text-sky-400">{activeLottery.daysLeft} days</p>
@@ -140,44 +134,21 @@ export default function ChampionsPoolPage() {
                 <p className="text-sm text-gray-400">Participants</p>
                 <p className="text-2xl font-bold text-sky-400">{activeLottery.participants}</p>
               </div>
-              <div>
-                <p className="text-sm text-gray-400">Max Stake Limit</p>
-                <p className="text-2xl font-bold text-blue-400">{activeLottery.maxStakeLimit} xcDOT</p>
-              </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="w-full bg-[#232d3f] border-0">
           <CardContent className="p-6">
-            <h3 className="text-xl font-bold text-white mb-4">Stake xcDOT in Champions Pool</h3>
-            <div className="space-y-2">
-              <label htmlFor="stakeAmount" className="text-sm text-gray-400">Amount to Stake (xcDOT)</label>
-              <Input
-                id="stakeAmount"
-                type="number"
-                value={stakeAmount}
-                onChange={(e) => setStakeAmount(e.target.value)}
-                max={xcdotToken.amount}
-                className="bg-[#1a2332] border-gray-700 text-white"
-              />
-            </div>
-            <div className="grid grid-cols-4 gap-2 mt-2">
-              {[25, 50, 75, 100].map((percentage) => (
-                <Button
-                  key={percentage}
-                  onClick={() => handlePercentageClick(percentage)}
-                  className="bg-sky-600 hover:bg-sky-700 text-white transition-all duration-300"
-                >
-                  {percentage}%
-                </Button>
-              ))}
+            <h3 className="text-xl font-bold text-white mb-4">Buy Ticket for Champions Pool</h3>
+            <div className="space-y-2 mb-4">
+              <p className="text-sm text-gray-400">Ticket Price: {FIXED_TICKET_PRICE} xcDOT</p>
             </div>
             <Button 
               onClick={handleStake} 
-              className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-blue-600 hover:to-sky-500 text-white transition-all duration-300 mt-4"
+              className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-blue-600 hover:to-sky-500 text-white transition-all duration-300"
             >
-              Stake in Champions Pool
+              Buy Ticket ({FIXED_TICKET_PRICE} xcDOT)
             </Button>
           </CardContent>
         </Card>
