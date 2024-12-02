@@ -9,6 +9,7 @@ import { formatUnits } from 'viem'
 import { NO_LOSS_LOTTERY_ABI } from "@/constants"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialogue"
 import { Button } from "../../components/ui/button"
+import { Progress } from "../../components/ui/progress"
 
 const contractAddress = "0xb93545C7c85aa67C8Daf09fFCE41749178213485"
 const abi = NO_LOSS_LOTTERY_ABI
@@ -39,9 +40,14 @@ export default function CautiousGameInterfaces() {
     }
   }
 
+  // Simulated pool progress (replace with actual data in production)
+  const preRaffleProgress = 65
+  const activePoolProgress = 80
+  const completedPoolProgress = 100
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 pt-10">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 pt-10 pb-20">
+      <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600">
             Interfaces for Cautious Game
@@ -52,43 +58,39 @@ export default function CautiousGameInterfaces() {
           </p>
         </div>
 
-        <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Pre-staking Pool Card */}
           <Link 
             href="/pool"
             className="block transition-transform hover:scale-[1.02]"
           >
             <Card className="w-full bg-[#232d3f] border-0 hover:bg-[#2a3649]">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <div className="flex items-center">
-                    <div>
-                      <h3 className="text-xl font-bold text-white">Pre-staking Pool</h3>
-                      <p className="text-sm text-gray-400">Start earning rewards</p>
-                    </div>
+              <CardContent className="p-4">
+                <div className="flex justify-between items-center mb-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Pre Raffle</h3>
+                    <p className="text-xs text-gray-400">Start earning rewards</p>
                   </div>
-                  <ArrowUpRight className="w-5 h-5 text-gray-400" />
+                  <ArrowUpRight className="w-4 h-4 text-gray-400" />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 gap-2 mb-2">
                   <div>
-                    <p className="text-sm text-gray-400">Total Staked</p>
-                    <p className="font-bold text-white">
+                    <p className="text-xs text-gray-400">Total Staked</p>
+                    <p className="text-sm font-bold text-white">
                       {raffleStats.data ? formatUnits(raffleStats.data[1], 10) : '0'} xcDOT
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Participants</p>
-                    <p className="font-bold text-white">
+                    <p className="text-xs text-gray-400">Participants</p>
+                    <p className="text-sm font-bold text-white">
                       {raffleStats.data ? raffleStats.data[0].toString() : '0'}
                     </p>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Days Active</p>
-                    <p className="font-bold text-white">
-                      {Math.ceil(2592000 / (60 * 60 * 24))}
-                    </p>
-                  </div>
+                </div>
+                <div className="mt-2">
+                  <p className="text-xs text-gray-400 mb-1">Pool Progress</p>
+                  <Progress value={preRaffleProgress} className="w-full h-2" />
                 </div>
               </CardContent>
             </Card>
@@ -101,43 +103,64 @@ export default function CautiousGameInterfaces() {
             onClick={handleActivePoolClick}
           >
             <Card className="w-full bg-[#232d3f] border-0 hover:bg-[#2a3649]">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <div className="flex items-center">
-                    <div>
-                      <h3 className="text-xl font-bold text-white">Active Pool</h3>
-                      <p className="text-sm text-gray-400">Manage your stakes</p>
-                    </div>
+              <CardContent className="p-4">
+                <div className="flex justify-between items-center mb-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Active Pool</h3>
+                    <p className="text-xs text-gray-400">Manage your stakes</p>
                   </div>
-                  <ArrowUpRight className="w-5 h-5 text-gray-400" />
+                  <ArrowUpRight className="w-4 h-4 text-gray-400" />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 gap-2 mb-2">
                   <div>
-                    <p className="text-sm text-gray-400">Your Stake</p>
-                    <p className="font-bold text-white">
+                    <p className="text-xs text-gray-400">Your Stake</p>
+                    <p className="text-sm font-bold text-white">
                       {userStakeInfo.data ? formatUnits(userStakeInfo.data[0], 10) : '0'} xcDOT
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Win Chance</p>
-                    <p className="font-bold text-white">
-                      {userStakeInfo.data && raffleStats.data
-                        ? ((Number(formatUnits(userStakeInfo.data[0], 10)) / 
-                            Number(formatUnits(raffleStats.data[1], 10))) * 100).toFixed(2)
-                        : '0'}%
+                    <p className="text-xs text-gray-400">Total Participants</p>
+                    <p className="text-sm font-bold text-white">
+                      {raffleStats.data ? raffleStats.data[0].toString() : '0'}
                     </p>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Days Left</p>
-                    <p className="font-bold text-white">
-                      {Math.ceil(2592000 / (60 * 60 * 24))}
-                    </p>
-                  </div>
+                </div>
+                <div className="mt-2">
+                  <p className="text-xs text-gray-400 mb-1">Pool Progress</p>
+                  <Progress value={activePoolProgress} className="w-full h-2" />
                 </div>
               </CardContent>
             </Card>
           </Link>
+
+          {/* Completed Lottery Card */}
+          <Card className="w-full bg-[#232d3f] border-0">
+            <CardContent className="p-4">
+              <div className="flex justify-between items-center mb-4">
+                <div>
+                  <h3 className="text-lg font-bold text-white">Completed Lottery</h3>
+                  <p className="text-xs text-gray-400">View past results</p>
+                </div>
+                <ArrowUpRight className="w-4 h-4 text-gray-400" />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                <div>
+                  <p className="text-xs text-gray-400">Total Staked</p>
+                  <p className="text-sm font-bold text-white">1,000,000 xcDOT</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-400">Winner</p>
+                  <p className="text-sm font-bold text-white">0x1234...5678</p>
+                </div>
+              </div>
+              <div className="mt-2">
+                <p className="text-xs text-gray-400 mb-1">Final Pool Size</p>
+                <Progress value={completedPoolProgress} className="w-full h-2" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="mt-8 text-center">
