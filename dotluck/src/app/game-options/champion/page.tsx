@@ -1,49 +1,74 @@
 "use client";
 
-import { Button } from "../../components/ui/button";
+import { Card, CardContent } from "../../components/ui/card";
 import Link from "next/link";
-import Image from "next/image";
-import championImage from "../../../../public/Leonardo_Phoenix_A_middleaged_man_with_a_beaming_smile_and_tea_0.jpg";
+import { ArrowUpRight } from 'lucide-react';
+import { useReadContract } from 'wagmi';
+import { formatUnits } from 'viem';
+import { NO_LOSS_LOTTERY_ABI } from "@/constants";
+
+const contractAddress = "0xb93545C7c85aa67C8Daf09fFCE41749178213485";
+const abi = NO_LOSS_LOTTERY_ABI;
 
 export default function ChampionGame() {
+  const raffleStats = useReadContract({
+    abi,
+    address: contractAddress,
+    functionName: 'getRaffleStats',
+  });
+
   return (
-    <div className="container mx-auto px-0 py-0">
-      <div className="bg-gray-800/80 rounded-lg shadow-lg overflow-hidden">
-        <div className="flex flex-col md:flex-row">
-          <div className="md:w-1/3 relative h-64 md:h-auto">
-            <Image
-              src={championImage}
-              alt="Champion Game"
-              layout="fill"
-              objectFit="cover"
-            />
-          </div>
-          <div className="md:w-2/3 p-6 flex flex-col justify-between">
-            <div>
-              <h2 className="text-3xl font-bold mb-4 text-transparent text-center bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600">
-                The Champion Game
-              </h2>
-              <p className="text-lg mb-8 text-white">
-                Welcome to The Champion game! Here you can play for high stakes
-                and big rewards. This is your chance to compete with the best
-                and aim for life-changing wins. Are you ready to join the
-                DOTLUCK Pool and prove you&apos;re a true champion?
-              </p>
-              <div className="px-6 pb-6 flex justify-center">
-                <Link href="/champions-pool">
-                  <Button className="w-full md:w-auto justify-v text-lg py-2 px-6 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-blue-600 hover:to-sky-500 text-white transition-all duration-300">
-                    Start Game
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 pt-10">
+      <div className="max-w-4xl mx-auto px-4">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600">
+            The Champion Game
+          </h1>
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+            Welcome to the Champion Game, where high stakes meet big rewards. This exclusive pool is designed for those who dare to dream big and play bigger. With a fixed maximum stake of $2.00, every player has an equal shot at glory. Are you ready to prove you're a true champion?
+          </p>
         </div>
-      </div>
-      <div className="mt-8 text-center">
-        <Link href="/game-options" className="text-sky-400 hover:text-sky-300">
-          Back to Game Selection
-        </Link>
+
+        <div className="space-y-6">
+          <Link 
+            href="/champions-pool"
+            className="block transition-transform hover:scale-[1.02]"
+          >
+            <Card className="w-full bg-[#232d3f] border-0 hover:bg-[#2a3649]">
+              <CardContent className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-xl font-bold text-white">Champion Pool</h3>
+                      <span className="px-3 py-1 text-xs font-medium text-sky-400 bg-sky-400/10 rounded-full">Active</span>
+                    </div>
+                    <p className="text-sm text-gray-400">High stakes, high rewards</p>
+                  </div>
+                  <ArrowUpRight className="w-5 h-5 text-gray-400" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-400">Total Staked</p>
+                    <p className="font-bold text-white">
+                      {raffleStats.data ? formatUnits(raffleStats.data[1], 10) : '0'} xcDOT
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-400">Maximum Stake</p>
+                    <p className="font-bold text-white">$2.00</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+
+        <div className="mt-8 text-center">
+          <Link href="/game-options" className="text-sky-400 hover:text-sky-300">
+            Back to Game Selection
+          </Link>
+        </div>
       </div>
     </div>
   );
