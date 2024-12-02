@@ -6,6 +6,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { useReadContract } from 'wagmi';
 import { formatUnits } from 'viem';
 import { NO_LOSS_LOTTERY_ABI } from "@/constants";
+import { Progress } from "../../components/ui/progress"
 
 const contractAddress = "0xb93545C7c85aa67C8Daf09fFCE41749178213485";
 const abi = NO_LOSS_LOTTERY_ABI;
@@ -16,6 +17,9 @@ export default function ChampionGame() {
     address: contractAddress,
     functionName: 'getRaffleStats',
   });
+
+  // Simulated pool progress (replace with actual data in production)
+  const poolProgress = 65;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 pt-10">
@@ -47,17 +51,31 @@ export default function ChampionGame() {
                   <ArrowUpRight className="w-5 h-5 text-gray-400" />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
                     <p className="text-sm text-gray-400">Total Staked</p>
                     <p className="font-bold text-white">
-                      {raffleStats.data ? formatUnits(raffleStats.data[1], 10) : '0'} xcDOT
+                      {raffleStats.data ? formatUnits(raffleStats.data[1], 10) : '0'} $
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Maximum Stake</p>
                     <p className="font-bold text-white">$2.00</p>
                   </div>
+                  <div>
+                    <p className="text-sm text-gray-400">Minimum Stake</p>
+                    <p className="font-bold text-white">$2.00</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-400">Participants</p>
+                    <p className="font-bold text-white">
+                      {raffleStats.data ? raffleStats.data[0].toString() : '0'}
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <p className="text-sm text-gray-400 mb-2">Pool Progress</p>
+                  <Progress value={poolProgress} className="w-full h-2" />
                 </div>
               </CardContent>
             </Card>
