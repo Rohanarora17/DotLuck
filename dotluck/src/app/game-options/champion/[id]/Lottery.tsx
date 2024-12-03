@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
-import { erc20Abi, parseEther, parseUnits } from 'viem'
+import { erc20Abi, parseUnits } from 'viem'
 import { Button } from '../../../components/ui/button'
 import { LOTTERY_ABI } from '@/constants'
 import Link from 'next/link'
@@ -19,6 +19,7 @@ export default function Lottery({id}:{id:number}) {
     const [startLotteryHash, setStartLotteryHash] = useState<`0x${string}` | undefined>()
     const [approvalHash, setApprovalHash] = useState<`0x${string}` | undefined>()
     const [isApproved, setIsApproved] = useState(false)
+   
   
     const lotteryId = BigInt(id)
   
@@ -33,6 +34,13 @@ export default function Lottery({id}:{id:number}) {
       address: LOTTERY_ADDRESS,
       abi: LOTTERY_ABI,
       functionName: 'getLotteryJackpot',
+      args: [lotteryId],
+    })
+
+    const {data: winner} = useReadContract({
+      address: LOTTERY_ADDRESS,
+      abi: LOTTERY_ABI,
+      functionName: 'getlotterywinner',
       args: [lotteryId],
     })
   
@@ -58,8 +66,17 @@ export default function Lottery({id}:{id:number}) {
     const { isLoading: isApproving } = useWaitForTransactionReceipt({
       hash: approvalHash,
     })
+
+
+    const formatBigintToNumber = (value: bigint): string => {
+      const divisor = BigInt(10 ** 10); // xcDOT token has 10 decimals
+      const formattedValue = Number(value) / Number(divisor); // Convert to number and divide
+      return formattedValue.toFixed(2); // Format to 2 decimal places
+    };
+    console.log(winner)
   
     useEffect(() => {
+      
       if (participantsData) {
         setParticipants(participantsData as string[])
       }
@@ -83,6 +100,16 @@ export default function Lottery({id}:{id:number}) {
     }
   
     const handleParticipate = () => {
+
+      console.log('reached 1')
+
+      if (!isConnected) {
+        alert("connect your wallet")
+     }
+        
+      console.log('reached 2')
+
+      
       if(!isApproved) {
         handleApprove()
       }
@@ -115,15 +142,7 @@ export default function Lottery({id}:{id:number}) {
       }
     }, [isParticipating, isStartingLottery, isApproving])
   
-    if (!isConnected) {
-      return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 p-6 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-xl text-white mb-4">Please connect your wallet to participate in the lottery.</p>
-          </div>
-        </div>
-      )
-    }
+    
 
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 p-10">
@@ -149,7 +168,7 @@ export default function Lottery({id}:{id:number}) {
                 </div>
                 <div className="bg-gray-800/50 rounded-lg p-3">
                   <p className="text-sm text-gray-400">Jackpot</p>
-                  <p className="text-xl font-bold text-white">{parseEther(jackpot.toString())} xcDOT</p>
+                  <p className="text-xl font-bold text-white">{formatBigintToNumber(jackpot)} xcDOT</p>
                 </div>
               </div>
 

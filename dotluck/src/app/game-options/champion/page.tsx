@@ -18,9 +18,27 @@ interface LotteryDetails {
   participationFee: bigint;
   minFee: bigint;
   isActive: boolean;
+  participants:string[];
 }
 
-const contractAddress = "0xc23D6746858a451a592C95e39A87e7Ebc754eF71";
+const contractAddress = "0x4235111A96Cc5C9A9F9AEBb5563FA56dc6E0a3F3";
+
+
+// Function to calculate the progress as a percentage
+const calculateProgress = (numParticipants:number, minParticipants:number, maxParticipants:number) => {
+  // Return 0% progress if there are no participants or the lottery hasn't started
+  if (numParticipants <= minParticipants) return 0;
+
+  // If the number of participants is greater than or equal to maxParticipants, set progress to 100%
+  if (numParticipants >= maxParticipants) return 100;
+
+  // Calculate progress between minParticipants and maxParticipants
+  const progress = ((numParticipants - minParticipants) / (maxParticipants - minParticipants)) * 100;
+
+  // Return the progress, ensuring it stays within 0-100 range
+  return Math.min(100, Math.max(0, progress));
+};
+
 
 const LotteryList = () => {
   const { data: lotteryIdCounter, isLoading: isLoadingIds } = useReadContract({
@@ -29,8 +47,10 @@ const LotteryList = () => {
     functionName: "lotteryIdCounter",
   });
 
+
   const [lotteries, setLotteries] = useState<LotteryDetails[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
     if (lotteryIdCounter) {
@@ -44,6 +64,13 @@ const LotteryList = () => {
             args: [BigInt(i)],
           });
 
+          const participants = await readContract(config, {
+            abi: LOTTERY_ABI,
+            address: contractAddress,
+            functionName: "getLotteryParticipants",
+            args: [BigInt(i)],
+          });
+
           if (data) {
             const [numWinners, minParticipants, maxParticipants, participationFee, minFee, isActive] = data;
             fetchedLotteries.push({
@@ -54,6 +81,7 @@ const LotteryList = () => {
               participationFee,
               minFee,
               isActive,
+              participants: [...participants], 
             });
           }
         }
@@ -65,9 +93,17 @@ const LotteryList = () => {
     }
   }, [lotteryIdCounter]);
 
-  const formatBigintToNumber = (value: bigint): string => {
+  const formatBigintToNumbers = (value: bigint): string => {
     return value.toString();
   };
+
+
+  const formatBigintToNumber = (value: bigint): string => {
+    const divisor = BigInt(10 ** 10); // xcDOT token has 10 decimals
+    const formattedValue = Number(value) / Number(divisor); // Convert to number and divide
+    return formattedValue.toFixed(2); // Format to 2 decimal places
+  };
+
 
   if (isLoadingIds || isLoading) {
     return <p className="text-gray-400 text-center">Loading lotteries...</p>;
@@ -101,11 +137,12 @@ const LotteryList = () => {
                 <CardContent className="p-4">
                   <div className="flex justify-between items-center mb-4">
                     <div>
+
                       <h3 className="text-lg font-bold text-white">Champion Lottery #{lottery.id}</h3>
                       <p className="text-xs text-gray-400">
                         Status: {' '}
                         <span className={lottery.isActive ? "text-green-400" : "text-red-400"}>
-                          {lottery.isActive ? "Active" : "Inactive"}
+                          {lottery.isActive ? "Active" : "Completed"}
                         </span>
                       </p>
                     </div>
@@ -119,26 +156,44 @@ const LotteryList = () => {
                     </div>
                     <div>
                       <p className="text-xs text-gray-400">Min Participants:</p>
-                      <p className="text-sm font-bold text-white">{formatBigintToNumber(lottery.minParticipants)} xcDOT</p>
+                      <p className="text-sm font-bold text-white">{formatBigintToNumbers(lottery.minParticipants)}</p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-400">Max Participants</p>
-                      <p className="text-sm font-bold text-white">{formatBigintToNumber(lottery.maxParticipants)}</p>
+                      <p className="text-sm font-bold text-white">{formatBigintToNumbers(lottery.maxParticipants)}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-400">Participation Fee</p>
-                      <p className="text-sm font-bold text-white">{formatBigintToNumber(lottery.participationFee)}</p>
+                      <p className="text-xs text-gray-400">Ticket Price</p>
+                      <p className="text-sm font-bold text-white">{formatBigintToNumber(lottery.participationFee)} xcDOT</p>
+                    </div>
+
+                    <div>
+                      <p className="text-xs text-gray-400">Total Participants</p>
+                      <p className="text-sm font-bold text-white">{lottery.participants.length}</p>
                     </div>
                     <div>
-                    <p>
+                    {/* <p>
                     <strong>Minimum Fee:</strong> {formatBigintToNumber(lottery.minFee)} xcDOT
-                  </p>
+                  </p> */}
                     </div>
                   </div>
                   <div className="mt-2">
-                    <p className="text-xs text-gray-400 mb-1">Lottery Progress</p>
-                    <Progress value={50} className="w-full h-2" />
-                  </div>
+                  {lottery.isActive ? (
+                    <>
+                      <p className="text-xs text-gray-400 mb-1">Lottery Progress</p>
+                      <Progress
+                        value={calculateProgress(lottery.participants.length, Number(lottery.minParticipants), Number(lottery.maxParticipants))}
+
+                        className="w-full h-2"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-xs text-gray-400 mb-1">Lottery Completed</p>
+                      <Progress value={100} className="w-full h-2" />
+                    </>
+                  )}
+                </div>
                 </CardContent>
               </Card>
             </Link>
