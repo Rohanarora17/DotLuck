@@ -40,7 +40,7 @@ export default function Lottery({id}:{id:number}) {
     const {data: Winner} = useReadContract({
       address: LOTTERY_ADDRESS,
       abi: LOTTERY_ABI,
-      functionName: 'getlotterywinners',
+      functionName: 'getlotterywinner',
       args: [lotteryId],
     })
   

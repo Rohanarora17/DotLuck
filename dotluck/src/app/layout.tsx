@@ -7,6 +7,7 @@ import { BackgroundBeamsWithCollision } from "../app/components/ui/background-be
 
 import "@rainbow-me/rainbowkit/styles.css";
 import { Providers } from "./providers";
+import { usePathname } from 'next/navigation';
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ToastContainer } from "react-toastify";
@@ -20,6 +21,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const isMainPage = pathname === '/';
+
   return (
     <html lang="en" className="dark">
       <body className={`${inter.className} bg-gray-900 text-white flex flex-col min-h-screen`}>
@@ -29,8 +33,7 @@ export default function RootLayout({
             <BackgroundBeamsWithCollision>
               <main className="relative z-10 flex-grow">{children}</main>
             </BackgroundBeamsWithCollision>
-            <ToastContainer/>
-            {/* <Footer /> */}
+            {!isMainPage && <Footer />}
           </QueryClientProvider>
         </Providers>
       </body>
