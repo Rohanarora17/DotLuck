@@ -4,11 +4,12 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { Header } from "../app/components/headers";
 import { BackgroundBeamsWithCollision } from "../app/components/ui/background-beams-with-collision";
-import { Footer } from "../app/components/footer";
+
 import "@rainbow-me/rainbowkit/styles.css";
 import { Providers } from "./providers";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ToastContainer } from "react-toastify";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,7 +29,8 @@ export default function RootLayout({
             <BackgroundBeamsWithCollision>
               <main className="relative z-10 flex-grow">{children}</main>
             </BackgroundBeamsWithCollision>
-            <Footer />
+            <ToastContainer/>
+            {/* <Footer /> */}
           </QueryClientProvider>
         </Providers>
       </body>
