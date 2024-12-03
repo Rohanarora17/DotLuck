@@ -18,14 +18,14 @@ interface LotteryDetails {
   participationFee: bigint;
   minFee: bigint;
   isActive: boolean;
-  participants:string[];
+  participants: string[];
 }
 
-const contractAddress = "0x4235111A96Cc5C9A9F9AEBb5563FA56dc6E0a3F3";
+const contractAddress = "0x6a7533d6D1C03B511A43191396b621a71c74a2e3";
 
 
 // Function to calculate the progress as a percentage
-const calculateProgress = (numParticipants:number, minParticipants:number, maxParticipants:number) => {
+const calculateProgress = (numParticipants: number, minParticipants: number, maxParticipants: number) => {
   // Return 0% progress if there are no participants or the lottery hasn't started
   if (numParticipants <= minParticipants) return 0;
 
@@ -81,7 +81,7 @@ const LotteryList = () => {
               participationFee,
               minFee,
               isActive,
-              participants: [...participants], 
+              participants: [...participants],
             });
           }
         }
@@ -128,7 +128,7 @@ const LotteryList = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {lotteries.map((lottery) => (
-            <Link 
+            <Link
               key={lottery.id}
               href={`champion/${lottery.id}`}
               className="block transition-transform hover:scale-[1.02]"
@@ -172,28 +172,28 @@ const LotteryList = () => {
                       <p className="text-sm font-bold text-white">{lottery.participants.length}</p>
                     </div>
                     <div>
-                    {/* <p>
+                      {/* <p>
                     <strong>Minimum Fee:</strong> {formatBigintToNumber(lottery.minFee)} xcDOT
                   </p> */}
                     </div>
                   </div>
                   <div className="mt-2">
-                  {lottery.isActive ? (
-                    <>
-                      <p className="text-xs text-gray-400 mb-1">Lottery Progress</p>
-                      <Progress
-                        value={calculateProgress(lottery.participants.length, Number(lottery.minParticipants), Number(lottery.maxParticipants))}
+                    {lottery.isActive ? (
+                      <>
+                        <p className="text-xs text-gray-400 mb-1">Lottery Progress</p>
+                        <Progress
+                          value={calculateProgress(lottery.participants.length, Number(lottery.minParticipants), Number(lottery.maxParticipants))}
 
-                        className="w-full h-2"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-xs text-gray-400 mb-1">Lottery Completed</p>
-                      <Progress value={100} className="w-full h-2" />
-                    </>
-                  )}
-                </div>
+                          className="w-full h-2"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-xs text-gray-400 mb-1">Lottery Completed</p>
+                        <Progress value={100} className="w-full h-2" />
+                      </>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             </Link>
