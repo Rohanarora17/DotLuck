@@ -8,7 +8,7 @@ import { LOTTERY_ABI } from '@/constants'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
-const LOTTERY_ADDRESS = '0xc23D6746858a451a592C95e39A87e7Ebc754eF71'
+const LOTTERY_ADDRESS = '0x6a7533d6D1C03B511A43191396b621a71c74a2e3'
 const xcDotAddress = "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080";
 
 export default function Lottery({id}:{id:number}) {
