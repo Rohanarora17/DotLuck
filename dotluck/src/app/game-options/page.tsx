@@ -27,7 +27,7 @@ export default function GameOptions() {
           </Link>
         </div>
 
-        {/* The Cautious Game */}
+        
         <div className="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col items-center">
           <Image
             src="/Leonardo_Phoenix_so_i_need_another_image_where_all_the_people_0.jpg"

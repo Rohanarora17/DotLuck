@@ -1,12 +1,14 @@
-"use client";
+'use client'
 
 import { useReadContract } from "wagmi";
-import {readContract} from "wagmi/actions"
+import { readContract } from "wagmi/actions"
 import { LOTTERY_ABI } from "@/constants";
 import { Card, CardContent } from "../../components/ui/card";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { config } from "@/wagmi";
+import { ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { Progress } from "../../components/ui/progress";
 
 interface LotteryDetails {
   id: number;
@@ -18,7 +20,7 @@ interface LotteryDetails {
   isActive: boolean;
 }
 
-const contractAddress = "0xc23D6746858a451a592C95e39A87e7Ebc754eF71"; // Replace with your contract address
+const contractAddress = "0xc23D6746858a451a592C95e39A87e7Ebc754eF71";
 
 const LotteryList = () => {
   const { data: lotteryIdCounter, isLoading: isLoadingIds } = useReadContract({
@@ -27,7 +29,6 @@ const LotteryList = () => {
     functionName: "lotteryIdCounter",
   });
 
-  
   const [lotteries, setLotteries] = useState<LotteryDetails[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -36,7 +37,7 @@ const LotteryList = () => {
       const fetchLotteries = async () => {
         const fetchedLotteries: LotteryDetails[] = [];
         for (let i = 1; i < Number(lotteryIdCounter); i++) {
-          const data = await readContract(config,{
+          const data = await readContract(config, {
             abi: LOTTERY_ABI,
             address: contractAddress,
             functionName: "lotteries",
@@ -44,9 +45,7 @@ const LotteryList = () => {
           });
 
           if (data) {
-            const [numWinners, minParticipants, maxParticipants, participationFee, minFee, isActive] =
-              data;
-
+            const [numWinners, minParticipants, maxParticipants, participationFee, minFee, isActive] = data;
             fetchedLotteries.push({
               id: i,
               numWinners,
@@ -67,7 +66,7 @@ const LotteryList = () => {
   }, [lotteryIdCounter]);
 
   const formatBigintToNumber = (value: bigint): string => {
-    return value.toString(); // Adjust formatting for decimals if needed
+    return value.toString();
   };
 
   if (isLoadingIds || isLoading) {
@@ -75,50 +74,74 @@ const LotteryList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 pt-10">
-      <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-4xl font-bold mb-6 text-white text-center">Available Lotteries</h1>
-        <div className="space-y-6">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 pt-10 pb-20">
+      <div className="max-w-6xl mx-auto px-4">
+        <Link href="/game-options" className="inline-flex items-center text-sky-400 hover:text-sky-300 mb-6">
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Game Selection
+        </Link>
+
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600">
+            Champion Lotteries
+          </h1>
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+            Choose from our available Champion Lotteries. Each lottery offers unique rewards and challenges.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {lotteries.map((lottery) => (
-            <Card key={lottery.id} className="bg-[#232d3f] border-0 hover:bg-[#2a3649]">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-xl font-bold text-white">Lottery #{lottery.id}</h3>
-                  <span
-                    className={`px-3 py-1 text-xs font-medium ${
-                      lottery.isActive
-                        ? "bg-green-500/10 text-green-400"
-                        : "bg-red-500/10 text-red-400"
-                    } rounded-full`}
-                  >
-                    {lottery.isActive ? "Active" : "Inactive"}
-                  </span>
-                </div>
-                <div className="mt-4 text-gray-400 space-y-2">
-                  <p>
-                    <strong>Number of Winners:</strong> {lottery.numWinners}
-                  </p>
-                  <p>
-                    <strong>Min Participants:</strong> {formatBigintToNumber(lottery.minParticipants)}
-                  </p>
-                  <p>
-                    <strong>Max Participants:</strong> {formatBigintToNumber(lottery.maxParticipants)}
-                  </p>
-                  <p>
-                    <strong>Participation Fee:</strong> {formatBigintToNumber(lottery.participationFee)} xcDOT
-                  </p>
-                  <p>
+            <Link 
+              key={lottery.id}
+              href={`champion/${lottery.id}`}
+              className="block transition-transform hover:scale-[1.02]"
+            >
+              <Card className="w-full bg-[#232d3f] border-0 hover:bg-[#2a3649]">
+                <CardContent className="p-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <div>
+                      <h3 className="text-lg font-bold text-white">Champion Lottery #{lottery.id}</h3>
+                      <p className="text-xs text-gray-400">
+                        Status: {' '}
+                        <span className={lottery.isActive ? "text-green-400" : "text-red-400"}>
+                          {lottery.isActive ? "Active" : "Inactive"}
+                        </span>
+                      </p>
+                    </div>
+                    <ArrowUpRight className="w-4 h-4 text-gray-400" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 mb-2">
+                    <div>
+                      <p className="text-xs text-gray-400">Number of Winners</p>
+                      <p className="text-sm font-bold text-white">{lottery.numWinners}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400">Min Participants:</p>
+                      <p className="text-sm font-bold text-white">{formatBigintToNumber(lottery.minParticipants)} xcDOT</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400">Max Participants</p>
+                      <p className="text-sm font-bold text-white">{formatBigintToNumber(lottery.maxParticipants)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400">Participation Fee</p>
+                      <p className="text-sm font-bold text-white">{formatBigintToNumber(lottery.participationFee)}</p>
+                    </div>
+                    <div>
+                    <p>
                     <strong>Minimum Fee:</strong> {formatBigintToNumber(lottery.minFee)} xcDOT
                   </p>
-                </div>
-                <Link
-                  href={`champion/${lottery.id}`}
-                  className="text-sky-400 hover:text-sky-300 mt-4 inline-block"
-                >
-                  View Details
-                </Link>
-              </CardContent>
-            </Card>
+                    </div>
+                  </div>
+                  <div className="mt-2">
+                    <p className="text-xs text-gray-400 mb-1">Lottery Progress</p>
+                    <Progress value={50} className="w-full h-2" />
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       </div>
@@ -127,3 +150,4 @@ const LotteryList = () => {
 };
 
 export default LotteryList;
+

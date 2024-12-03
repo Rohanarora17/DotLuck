@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react'
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { erc20Abi, parseEther, parseUnits } from 'viem'
-import { Button } from '@/app/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/app/components/ui/card'
+import { Button } from '../../../components/ui/button'
 import { LOTTERY_ABI } from '@/constants'
+import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 
 const LOTTERY_ADDRESS = '0xc23D6746858a451a592C95e39A87e7Ebc754eF71'
 const xcDotAddress = "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080";
@@ -84,7 +85,6 @@ export default function Lottery({id}:{id:number}) {
     const handleParticipate = () => {
       if(!isApproved) {
         handleApprove()
-        
       }
       participate({
         address: LOTTERY_ADDRESS,
@@ -116,30 +116,66 @@ export default function Lottery({id}:{id:number}) {
     }, [isParticipating, isStartingLottery, isApproving])
   
     if (!isConnected) {
-      return <div>Please connect your wallet to participate in the lottery.</div>
+      return (
+        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 p-6 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-xl text-white mb-4">Please connect your wallet to participate in the lottery.</p>
+          </div>
+        </div>
+      )
     }
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-between p-24">
-    <Card className="w-[350]">
-      <CardHeader>
-        <CardTitle>Lottery #{id}</CardTitle>
-        <CardDescription>Participate in the lottery or start it if enough participants have joined.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p>Participants: {participants.length}</p>
-        <p>Jackpot: {parseEther(jackpot.toString())} xcDOT</p>
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button onClick={handleParticipate} disabled={isParticipating}>
-          {isParticipating ? 'Participating...' : 'Participate'}
-        </Button>
-        {address?.toLowerCase() === "0x329cB26Ac9320cb571E83F27Db68f71b8c18940C".toLowerCase() ?
-        <Button onClick={handleStartLottery} disabled={isStartingLottery}>
-          {isStartingLottery  ? 'Starting...' : 'End Lottery'}
-        </Button> : null}
-      </CardFooter>
-    </Card>
-    </div>
-  )
+
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 p-10">
+        <div className="max-w-md mx-auto">
+          <Link href="/game-options/champion" className="inline-flex items-center text-sky-400 hover:text-sky-300 mb-6">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Lotteries
+          </Link>
+
+          <div className="bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 p-0.5 rounded-lg shadow-lg">
+            <div className="bg-[#232d3f] rounded-lg p-6">
+              <div className="text-center mb-6">
+                <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                  LOTTERY TICKET
+                </h1>
+                <div className="text-2xl font-bold text-white mt-2">#{id}</div>
+              </div>
+
+              <div className="space-y-4 mb-8">
+                <div className="bg-gray-800/50 rounded-lg p-3">
+                  <p className="text-sm text-gray-400">Participants</p>
+                  <p className="text-xl font-bold text-white">{participants.length}</p>
+                </div>
+                <div className="bg-gray-800/50 rounded-lg p-3">
+                  <p className="text-sm text-gray-400">Jackpot</p>
+                  <p className="text-xl font-bold text-white">{parseEther(jackpot.toString())} xcDOT</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <Button 
+                  onClick={handleParticipate} 
+                  disabled={isParticipating}
+                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 text-lg font-semibold rounded-md"
+                >
+                  {isParticipating ? 'Participating...' : 'Participate'}
+                </Button>
+
+                {address?.toLowerCase() === "0x329cB26Ac9320cb571E83F27Db68f71b8c18940C".toLowerCase() && (
+                  <Button 
+                    onClick={handleStartLottery} 
+                    disabled={isStartingLottery}
+                    className="w-full bg-red-500 hover:bg-red-600 text-white py-3 text-lg font-semibold rounded-md"
+                  >
+                    {isStartingLottery ? 'Starting...' : 'End Lottery'}
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
 }
 
