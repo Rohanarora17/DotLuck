@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
-import { erc20Abi, parseEther, parseUnits } from 'viem'
+import { erc20Abi, parseUnits } from 'viem'
 import { Button } from '../../../components/ui/button'
 import { LOTTERY_ABI } from '@/constants'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { toast } from "react-toastify"
+
 const LOTTERY_ADDRESS = '0xc23D6746858a451a592C95e39A87e7Ebc754eF71'
 const xcDotAddress = "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080";
 
@@ -37,7 +37,7 @@ export default function Lottery({id}:{id:number}) {
       args: [lotteryId],
     })
 
-    const {data: Winner} = useReadContract({
+    const {data: winner} = useReadContract({
       address: LOTTERY_ADDRESS,
       abi: LOTTERY_ABI,
       functionName: 'getlotterywinner',
@@ -73,8 +73,10 @@ export default function Lottery({id}:{id:number}) {
       const formattedValue = Number(value) / Number(divisor); // Convert to number and divide
       return formattedValue.toFixed(2); // Format to 2 decimal places
     };
+    console.log(winner)
   
     useEffect(() => {
+      
       if (participantsData) {
         setParticipants(participantsData as string[])
       }
