@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from "react"
+import React from "react"
 import { Card, CardContent } from "../../components/ui/card"
 import Link from "next/link"
 import { ArrowUpRight } from 'lucide-react'
@@ -50,7 +51,7 @@ export default function CautiousGameInterfaces() {
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600">
-            Interfaces for Cautious Game
+            Cautious Game
           </h1>
           <p className="text-lg text-gray-300 max-w-2xl mx-auto">
             There are multiple ways to interact with the Cautious Game pools. Choose the interface that best suits your needs,
