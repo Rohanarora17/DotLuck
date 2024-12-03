@@ -10,7 +10,7 @@ import { Providers } from "./providers";
 import { usePathname } from 'next/navigation';
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ToastContainer } from "react-toastify";
+import { Footer } from "../app/components/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
