@@ -1,5 +1,7 @@
-import Link from 'next/link';
-import { Button } from '../app/components/ui/button';
+import Link from 'next/link'
+import Image from 'next/image'
+import { Button } from '../app/components/ui/button'
+import polkadotlogo from "../../public/polkadot1.png"
 
 export default function Home() {
   return (
@@ -8,8 +10,15 @@ export default function Home() {
       <p className="text-4xl mb-8 bg-gradient-to-r from-purple-400 to-pink-600 text-transparent bg-clip-text font-bold">
         A Decentralized Lottery on Chain
       </p>
-      <p className="text-2xl mb-8 text-purple-300">
-        secured by polkadot
+      <p className="text-2xl mb-8 text-purple-300 flex items-center justify-center gap-2">
+        secured by{' '}
+        <Image
+          src={polkadotlogo}
+          alt="Polkadot"
+          width={120}
+          height={30}
+          className="inline-block"
+        />
       </p>
       <div className="mb-8">
         <Link href="/game-options">
@@ -23,6 +32,6 @@ export default function Home() {
         Smart contracts ensure complete decentralization and trustlessness.
       </p>
     </div>
-  );
+  )
 }
 

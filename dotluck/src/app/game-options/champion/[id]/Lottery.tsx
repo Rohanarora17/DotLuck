@@ -120,7 +120,7 @@ export default function Lottery({id}:{id:number}) {
     }
   return (
     <div className="flex min-h-screen flex-col items-center justify-between p-24">
-    <Card className="w-[350px]">
+    <Card className="w-[350]">
       <CardHeader>
         <CardTitle>Lottery #{id}</CardTitle>
         <CardDescription>Participate in the lottery or start it if enough participants have joined.</CardDescription>
