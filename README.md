@@ -4,7 +4,8 @@
 
 ### Team Members:
 - **Rudransh Singh Tomar** (GitHub: [trudransh](https://github.com/trudransh))
-- **Raveesh Kumar** (GitHub: [Raveesh1007](https://github.com/Raveesh1007))
+- **Rohan Arora** (GitHub: [Raveesh1007](https://github.com/Raveesh1007))
+- **Rohan Arora** (GitHub: [Raveesh1007](https://github.com/Rohanarora17))
 
 ---
 
